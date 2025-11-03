@@ -8,11 +8,12 @@ import {
   completenessScorer,
   translationScorer,
 } from "./scorers/weather-scorer";
-import { bookAgent } from "./agents/book-agent";
+import { bookCompass } from "./agents/book-agent";
+import { a2aAgentRoute } from "./routes/a2a-route";
 
 export const mastra = new Mastra({
   workflows: { weatherWorkflow },
-  agents: { weatherAgent, bookAgent },
+  agents: { weatherAgent, bookCompass },
   scorers: {
     toolCallAppropriatenessScorer,
     completenessScorer,
@@ -33,5 +34,12 @@ export const mastra = new Mastra({
   observability: {
     // Enables DefaultExporter and CloudExporter for AI tracing
     default: { enabled: true },
+  },
+  server: {
+    build: {
+      openAPIDocs: true,
+      swaggerUI: true,
+    },
+    apiRoutes: [a2aAgentRoute],
   },
 });

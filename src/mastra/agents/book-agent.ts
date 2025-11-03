@@ -5,8 +5,8 @@ import {
   similarBooksTool,
 } from "../tools/book-tool";
 
-export const bookAgent = new Agent({
-  name: "Book Agent",
+export const bookCompass = new Agent({
+  name: "Book Compass",
   instructions: `
       You are a helpful book assistant that provides accurate information about books and authors.
 
