@@ -10,20 +10,6 @@ export const a2aAgentRoute = registerApiRoute("/a2a/agent/:agentId", {
 
       // Parse JSON-RPC 2.0 request
       const body = await c.req.json();
-
-      if (!body || Object.keys(body).length === 0) {
-        return c.json(
-          {
-            jsonrpc: "2.0",
-            id: null,
-            result: {
-              message: "Empty request body received",
-            },
-          },
-          200
-        );
-      }
-
       const { jsonrpc, id: requestId, method, params } = body;
 
       // Validate JSON-RPC 2.0 format
@@ -38,7 +24,7 @@ export const a2aAgentRoute = registerApiRoute("/a2a/agent/:agentId", {
                 'Invalid Request: jsonrpc must be "2.0" and id is required',
             },
           },
-          400
+          200
         );
       }
 
