@@ -1,6 +1,17 @@
 import { registerApiRoute } from "@mastra/core/server";
 import { randomUUID } from "crypto";
 
+type Artifact = {
+  artifactId: string;
+  name: string;
+  parts: ArtifactType[];
+};
+
+type ArtifactType = {
+  kind: string;
+  text?: string;
+};
+
 export const a2aAgentRoute = registerApiRoute("/a2a/agent/:agentId", {
   method: "POST",
   handler: async (c) => {
@@ -71,7 +82,7 @@ export const a2aAgentRoute = registerApiRoute("/a2a/agent/:agentId", {
       const agentText = response.text || "";
 
       // Build artifacts array
-      const artifacts: any = [
+      const artifacts: Artifact[] = [
         {
           artifactId: randomUUID(),
           name: `${agentId}Response`,

@@ -1,6 +1,25 @@
 import { createTool } from "@mastra/core/tools";
 import { z } from "zod";
 
+interface VolumeInfo {
+  title: string;
+  authors?: string[];
+  description?: string;
+  publishedDate?: string;
+  previewLink?: string;
+  imageLinks?: {
+    thumbnail?: string;
+  };
+}
+
+interface BookItem {
+  volumeInfo: VolumeInfo;
+}
+
+interface BooksApiResponse {
+  items?: BookItem[];
+}
+
 export const bookTool = createTool({
   id: "get-book-or-author",
   description: "Search Google Books API for book or author data",
@@ -24,7 +43,7 @@ const getBookData = async (searchQuery: string) => {
     searchQuery
   )}`;
   const response = await fetch(bookAPIUrl);
-  const data = await response.json();
+  const data: BooksApiResponse = await response.json();
 
   if (!data.items?.[0]) {
     throw new Error(`No results found for '${searchQuery}'`);
@@ -70,14 +89,14 @@ const getAuthorBooks = async (author: string, limit: number) => {
   )}`;
 
   const response = await fetch(url);
-  const data = await response.json();
+  const data: BooksApiResponse = await response.json();
 
   if (!data.items || data.items.length === 0) {
     throw new Error(`No books found for author '${author}'`);
   }
 
   // sort by published date descending
-  const sorted = data.items.sort((a: any, b: any) => {
+  const sorted = data.items.sort((a, b) => {
     const da = a.volumeInfo.publishedDate
       ? new Date(a.volumeInfo.publishedDate).getTime()
       : 0;
@@ -90,7 +109,7 @@ const getAuthorBooks = async (author: string, limit: number) => {
   const sliced = sorted.slice(0, limit);
 
   return {
-    books: sliced.map((item: any) => ({
+    books: sliced.map((item) => ({
       title: item.volumeInfo.title,
       publishedDate: item.volumeInfo.publishedDate,
       previewLink: item.volumeInfo.previewLink,
@@ -132,7 +151,7 @@ const getSimilarBooks = async (terms: string[], limit: number) => {
   const url = `https://www.googleapis.com/books/v1/volumes?q=${query}`;
 
   const response = await fetch(url);
-  const data = await response.json();
+  const data: BooksApiResponse = await response.json();
 
   if (!data.items || data.items.length === 0) {
     throw new Error(`No similar books found for '${terms.join(", ")}'`);
@@ -141,7 +160,7 @@ const getSimilarBooks = async (terms: string[], limit: number) => {
   const sliced = data.items.slice(0, limit);
 
   return {
-    books: sliced.map((item: any) => ({
+    books: sliced.map((item) => ({
       title: item.volumeInfo.title,
       authors: item.volumeInfo.authors,
       publishedDate: item.volumeInfo.publishedDate,
